@@ -15,7 +15,8 @@ class TimeEvent extends Event{
     }
 }
 
+
 module.exports = {
     Event,
-    TimeEvent    
+    TimeEvent
 }
