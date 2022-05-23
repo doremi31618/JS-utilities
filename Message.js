@@ -6,6 +6,6 @@ class SystemMessage{
     }
 }
 
-module.export = {
+module.exports = {
     SystemMessage
 }

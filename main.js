@@ -1,71 +1,17 @@
-
-const config = {
-    name: "AudioFenceGame",
-    duration: 20000,
-    interval: 100,
-    events: [
-        {
-            name: "start_game",
-            type: "event",
-            mode: "none",
-            id: "start_game",
-            startTime: 0,
-            extra: {}
-        },
-        {
-            name: "start_game",
-            type: "event",
-            mode: "none",
-            id: "start_game",
-            startTime: 3000,
-            extra: {}
-        },
-        {
-            name: "start_game",
-            type: "event",
-            mode: "none",
-            id: "start_game",
-            startTime: 5000,
-            extra: {}
-        },
-        {
-            name: "start_game",
-            type: "event",
-            mode: "none",
-            id: "start_game",
-            startTime: 7000,
-            extra: {}
-        },
-        {
-            name: "start_game",
-            type: "event",
-            mode: "none",
-            id: "start_game",
-            startTime: 9000,
-            extra: {}
-        },
-        {
-            name: "start_game",
-            type: "event",
-            mode: "none",
-            id: "start_game",
-            startTime: 12000,
-            extra: {}
-        },
-        {
-            name: "start_game",
-            type: "event",
-            mode: "none",
-            id: "start_game",
-            startTime: 15000,
-            extra: {}
-        },
-    ]
-}
-var Timeline = require('./Timeline');
-let timeline = new Timeline();
-timeline.load(config);
-timeline.on("start_game", (eventArgs)=>{
-    console.log(eventArgs);
+var StateMachine = require("./StateMachine");
+let fsm = new StateMachine();
+fsm.addState({name: "State1"});
+fsm.addState({name: "State2"});
+fsm.addTransition({
+    from: "State1",
+    to: "State2",
+    name: "State1ToState2"
 })
-timeline.play();
+
+fsm.on("onEnterState1", (state1)=>{console.log("enter state1 ", state1);})
+fsm.on("onEnterState2", (state2)=>{console.log("enter state2 ", state2);})
+fsm.on("onBeforeState1ToState2", ()=>{console.log("before enter transition")});
+fsm.on('onState1ToState2', ()=>{console.log("state1 to state2")});
+fsm.on('onAfterState1ToState2', ()=>{console.log("on leave transition")});
+fsm.start();
+fsm.to("State2");
