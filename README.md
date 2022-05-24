@@ -1,4 +1,4 @@
-# StateMachine
+# [StateMachine](https://github.com/doremi31618/JS-utilities/blob/master/doc/StateMachine.md)
 
 ---
 
@@ -24,7 +24,7 @@ fsm.start();
 fsm.to("State2");
 ```
 
-# Timeline
+# [Timeline](https://github.com/doremi31618/JS-utilities/blob/master/doc/Timeline.md)
 
 ---
 
