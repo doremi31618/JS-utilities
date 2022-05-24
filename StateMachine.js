@@ -10,11 +10,14 @@ module.exports = class StateMachine extends EventEmitter{
 
         this.states = new Map();
         this.transitions = new Map();
+        this.eventProtypes = new Map();
         this.initial = "NotSetInitial";
         this.current = {
             type: "state",
             name: this.initial
         }
+        this.observerEvents = [];
+        
         if (!props)return new SystemMessage("init", "not found transition", "complete");
         
         //assgin value and check 
@@ -70,10 +73,7 @@ module.exports = class StateMachine extends EventEmitter{
                 name: transition.name
             }
         })
-        this.on("on"+transition.name, async ()=>{
-            console.log("onEnterTransition2");
-            return transition;
-        })
+        
         
     }
     availableTransitions(){
@@ -86,11 +86,6 @@ module.exports = class StateMachine extends EventEmitter{
         return arr;
     }
 
-    _changeCurrentStatus(nextStatus){
-        let {type, status, name} = nextStatus;
-        let data = (type == "state") ? this.states.get(name) : this.transitions.get(name);
-        this.emit(status+name, data);
-    }
     getTransition(from, to){
         for(const item of this.transitions){
             if (item[1].from == from && item[1].to == to)
@@ -112,16 +107,25 @@ module.exports = class StateMachine extends EventEmitter{
         let prev = this.states.get(transition.from);
         let next = this.states.get(transition.to);
 
-        this.emit("onLeave"+transition.from, prev);
-        this.emit("onBefore"+transition.name, transition);
-        this.emit("on"+transition.name, transition).then(
-            (results)=>{
-                this.emit("onAfter"+transition.name, transition);
-                this.emit("onEnter"+transition.to, next);
-            }
-        );
+        this.observe("onLeave"+transition.from, prev);
+        this.observe("onBefore"+transition.name, transition);
+        this.observe("on"+transition.name, transition);
+        this.observe("onAfter"+transition.name, transition);
+        this.observe("onEnter"+transition.to, next);
     }
-    
+
+    isPromise(p) {
+        return p && Object.prototype.toString.call(p) === "[object Promise]"
+    }
+
+    event(event_name, callback){
+        if (this.eventProtypes.has(event_name)){
+            this.eventProtypes.get(event_name) = callback;
+            return;
+        }
+        this.eventProtypes.set(event_name, callback);
+
+    }
     start(){
         //check if there is available state
         if (this.initial == "NotSetInitial")return new SystemMessage("start", "no available state to start", "failed");
@@ -129,6 +133,46 @@ module.exports = class StateMachine extends EventEmitter{
             type: "state",
             name: this.initial
         }
-        this.emit("onEnter"+this.initial, this.states.get(this.initial));
+        this.observe("onEnter"+this.initial, this.states.get(this.initial))
+    }
+
+    observe(_eventName, data){
+
+        let lastIndex = this.observerEvents.length;
+        const eventTemplate = {
+            name : _eventName,
+            status: "pending"
+        }
+
+        const triggerEvent = ()=>{
+
+            this.emit(_eventName, data);
+            eventTemplate.status = 'processing';
+        }
+
+        eventTemplate.event = triggerEvent;
+        this.observerEvents.push(eventTemplate);
+        
+        this.on(_eventName, async ()=>{
+            //process substitude event
+            if (this.eventProtypes.has(_eventName)){
+                let _event = this.eventProtypes.get(_eventName);
+                if (this.isPromise(_event))
+                    await this.eventProtypes.get(_eventName);
+                else 
+                    _event();
+            }
+            eventTemplate.status = "complete";
+            this.observerEvents.shift();
+
+            if (this.observerEvents.length == 0 ) return;
+            if (this.observerEvents[0].status == "pending"){
+                this.observerEvents[0].event();
+            }
+        })
+        if (lastIndex==0)
+            triggerEvent();
+        
+        
     }
 }

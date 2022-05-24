@@ -1,3 +1,8 @@
+# StateMachine
+
+---
+
+```jsx
 var StateMachine = require("./StateMachine");
 let fsm = new StateMachine();
 fsm.addState({name: "State1"});
@@ -15,13 +20,20 @@ fsm.on("onState1ToState2", (transition)=>{console.log("on transition",transition
 fsm.on('onAfterState1ToState2', (transition)=>{console.log("After transition",transition)});
 fsm.on("onEnterState2", (state2)=>{console.log("Enter state2 ", state2);})
 
-fsm.event('onLeaveState1', new Promise((resolve, reject)=>{
-    setTimeout(()=>{
-        console.log('after 1 sec');
-        resolve("success");
-    },1000);
-}))
-fsm.event('onBeforeState1ToState2', ()=>{console.log('before transition')})
-
 fsm.start();
 fsm.to("State2");
+```
+
+# Timeline
+
+---
+
+```jsx
+var Timeline = require('./Timeline');
+let timeline = new Timeline();
+timeline.load(config);
+timeline.on("start_game", (eventArgs)=>{
+    console.log(eventArgs);
+})
+timeline.play();
+```
