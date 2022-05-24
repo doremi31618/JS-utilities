@@ -40,7 +40,7 @@ fsm.start();
 fsm.to("State2");
 ```
 
-![截圖 2022-05-24 下午1.45.01.png](StateMachine%2018739d90c2f84707b44a9bf3263738b2/%E6%88%AA%E5%9C%96_2022-05-24_%E4%B8%8B%E5%8D%881.45.01.png)
+![截圖 2022-05-24 下午1.45.01.png](https://github.com/doremi31618/JS-utilities/blob/master/img/states.png))
 
 > use case 2 : create by config
 > 
@@ -128,7 +128,7 @@ fsm.start();
 
 ## Lifecycle
 
-![截圖 2022-05-19 下午4.54.13.png](StateMachine%2018739d90c2f84707b44a9bf3263738b2/%E6%88%AA%E5%9C%96_2022-05-19_%E4%B8%8B%E5%8D%884.54.13.png)
+![截圖 2022-05-19 下午4.54.13.png](https://github.com/doremi31618/JS-utilities/blob/master/img/lifecycle.png)
 
 ## API
 
